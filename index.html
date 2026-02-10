@@ -383,50 +383,28 @@
             window.scrollTo({ top: 0, behavior: 'smooth' });
         }
 
-        function handleFormSubmit(e) {
-            e.preventDefault();
-            
-            const name = document.getElementById('siswaName').value;
-            const guruKat = document.getElementById('guruKategori').value;
-            const guruNama = document.getElementById('guruNamaLengkap').value;
-            const email = document.getElementById('siswaEmail').value;
+       <script>
+function handleFormSubmit(e) {
+  e.preventDefault();
 
-            // Tampilkan loading modal
-            document.getElementById('modalSuccess').classList.remove('hidden');
-            document.getElementById('modalSuccess').classList.add('flex');
-            
-            // Simulasi proses "mengirim" dan persetujuan
-            setTimeout(() => {
-                document.getElementById('modalTitle').innerText = "Berhasil Dikirim!";
-                document.getElementById('modalIcon').classList.remove('animate-bounce', 'bg-blue-100', 'text-blue-600');
-                document.getElementById('modalIcon').classList.add('bg-green-100', 'text-green-600');
-                document.getElementById('modalIcon').innerHTML = '<i class="fa-solid fa-check"></i>';
-                document.getElementById('modalMsg').innerHTML = `Permintaan izin telah dikirim ke <b>${guruNama}</b> (${guruKat}). <br><br>Sistem akan mengirim email bukti ke <b>${email}</b> segera setelah disetujui.`;
-                document.getElementById('modalAction').classList.remove('hidden');
+  const fullData = document.getElementById("siswaName").value;
+  const [nama, kelas] = fullData.split(" - ");
 
-                // Tambahkan ke tabel riwayat (simulasi)
-                const tbody = document.getElementById('statusTableBody');
-                const row = `
-                    <tr class="border-b border-slate-50 last:border-0 bg-blue-50/30">
-                        <td class="py-6 px-2">
-                            <p class="font-bold text-slate-800">Izin Baru (${name})</p>
-                            <p class="text-[10px] text-slate-400">Baru Saja</p>
-                        </td>
-                        <td class="py-6 px-2">
-                            <p class="text-sm font-medium text-slate-600">${guruNama}</p>
-                            <p class="text-[10px] text-blue-500 font-bold uppercase">${guruKat}</p>
-                        </td>
-                        <td class="py-6 px-2">
-                            <span class="status-badge bg-amber-100 text-amber-700">Menunggu</span>
-                        </td>
-                        <td class="py-6 px-2">
-                            <span class="text-xs text-slate-400 italic">Menunggu Izin...</span>
-                        </td>
-                    </tr>
-                `;
-                tbody.insertAdjacentHTML('afterbegin', row);
-            }, 2000);
-        }
+  const data = {
+    nama: nama || fullData,
+    kelas: kelas || "-",
+    keperluan: document.querySelector("textarea").value,
+    diizinkanOleh: document.getElementById("guruNamaLengkap").value
+  };
+
+  google.script.run
+    .withSuccessHandler(() => {
+      alert("Pengajuan berhasil disimpan!");
+      document.getElementById("dispenForm").reset();
+    })
+    .simpanDispensa(data);
+}
+</script>
 
         function closeModal() {
             document.getElementById('modalSuccess').classList.add('hidden');
