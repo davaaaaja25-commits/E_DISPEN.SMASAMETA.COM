@@ -384,25 +384,33 @@
         }
 
        <script>
+const APPS_SCRIPT_URL = "https://script.google.com/macros/s/XXXXXXXX/exec";
+
 function handleFormSubmit(e) {
   e.preventDefault();
 
-  const fullData = document.getElementById("siswaName").value;
-  const [nama, kelas] = fullData.split(" - ");
-
   const data = {
-    nama: nama || fullData,
-    kelas: kelas || "-",
+    nama: document.getElementById("siswaName").value,
+    kelas: "-",
     keperluan: document.querySelector("textarea").value,
     diizinkanOleh: document.getElementById("guruNamaLengkap").value
   };
 
-  google.script.run
-    .withSuccessHandler(() => {
-      alert("Pengajuan berhasil disimpan!");
-      document.getElementById("dispenForm").reset();
-    })
-    .simpanDispensa(data);
+  fetch(APPS_SCRIPT_URL, {
+    method: "POST",
+    body: JSON.stringify(data),
+    headers: {
+      "Content-Type": "application/json"
+    }
+  })
+  .then(res => res.json())
+  .then(res => {
+    alert("Berhasil dikirim ke Spreadsheet");
+  })
+  .catch(err => {
+    alert("Gagal mengirim data");
+    console.error(err);
+  });
 }
 </script>
 
